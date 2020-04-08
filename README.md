@@ -8,13 +8,13 @@
 ## Introduction
 
 In the previous lessons, we started to see how customizing our JSON data in the
-controller works but can start to get pretty complicated. It is possible for
-a single controller action to render data from multiple models on our Rails
-API. It is also possible to specify what we want and don't want to render.
+controller works but can start to get pretty complicated. It is possible for a
+single controller action to render data from multiple models on our Rails API.
+It is also possible to specify what we want and don't want to render.
 
 The complication comes when we start to scale. More models, more data, more
-pieces to customize until it becomes unmanageable. In this code-along, we're going
-to look at building our own solution to this problem.
+pieces to customize until it becomes unmanageable. In this code-along, we're
+going to look at building our own solution to this problem.
 
 The files in this lesson were populated using the API-only Rails build. Run
 `rails db:migrate` and `rails db:seed` to follow along.
@@ -79,7 +79,8 @@ visiting `http://localhost:3000/sightings/2` produces the following set of data:
 }
 ```
 
-We can use the same render statement in an `index` action without having to change it:
+We can use the same render statement in an `index` action without having to
+change it:
 
 ```rb
 class SightingsController < ApplicationController
@@ -102,8 +103,8 @@ end
 ```
 
 However, the way things are presents some problems. Having to include this in
-every controller action would not be very DRY. In addition, as mentioned
-before, it is difficult to read, and equally difficult to write and update without
+every controller action would not be very DRY. In addition, as mentioned before,
+it is difficult to read, and equally difficult to write and update without
 making errors.
 
 There is also a separate issue - controllers are really just meant to act as a
@@ -116,12 +117,13 @@ resolve this issue is to build a service class.
 
 ## Creating a Service Class
 
-A service class is a class specific to our domain that handles some of the business
-logic of the application. In this case, we are looking to handle the logic of
-arranging our JSON data the way we want it.
+A service class is a class specific to our domain that handles some of the
+business logic of the application. In this case, we are looking to handle the
+logic of arranging our JSON data the way we want it.
 
 In the `SightingsController`, we already have working render statements. Our
-goal is not to change these statements, just move the work off of the controller.
+goal is not to change these statements, just move the work off of the
+controller.
 
 To create a class we will be able to utilize in place of the current render
 statements, first, we'll create a new folder within `app` called `services`:
@@ -148,8 +150,8 @@ end
 ```
 
 Once a new class and file are created this way, you'll need to restart the Rails
-server if it is running in order for `SightingSerializer` to be recognized
-and available in places like `SightingsController`.
+server if it is running in order for `SightingSerializer` to be recognized and
+available in places like `SightingsController`.
 
 ## Configuring the New Serializer
 
@@ -203,9 +205,10 @@ will be stored as `@sighting`. We will need access to this variable elsewhere
 in the `SightingSerializer`, so an instance variable is needed here.
 
 The second step is to write a method that will call `to_json` on this instance
-variable, handling the inclusion and exclusion of attributes, and return the results. 
-We will call this method `to_serialized_json`, and for now we can directly copy the 
-`to_json` logic that currently exists in `SightingsController`:
+variable, handling the inclusion and exclusion of attributes, and return the
+results. We will call this method `to_serialized_json`, and for now we can
+directly copy the `to_json` logic that currently exists in
+`SightingsController`:
 
 ```ruby
 class SightingSerializer
@@ -225,8 +228,8 @@ end
 ```
 
 With this setup, once an instance of `SightingSerializer` is created, we can
-call `to_serialized_json` on it to get our data customized and ready to go as
-a JSON string!
+call `to_serialized_json` on it to get our data customized and ready to go as a
+JSON string!
 
 Now it is time to clean up `SightingsController` and replace the original render
 statements with our new service class:
@@ -281,7 +284,8 @@ same values as before. Finally, at the end of the method, instead of filling
 
 ## Conclusion
 
-With a fully extracted `SightingSerializer`, we were able to leave our controller
-free of clutter and extra logic. We were able to write a small class and utilize
-its methods multiple times, rather than repeat ourselves. Meanwhile, we now have
-the space within that class to make our code as easy to understand as possible.
+With a fully extracted `SightingSerializer`, we were able to leave our
+controller free of clutter and extra logic. We were able to write a small class
+and utilize its methods multiple times, rather than repeat ourselves. Meanwhile,
+we now have the space within that class to make our code as easy to understand
+as possible.
